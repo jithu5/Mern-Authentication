@@ -16,6 +16,7 @@ export const userAuth = AsyncHandler(async (req, res, next) => {
       throw new ApiError(403, "Invalid token");
     }
     req.body.userId = decoded.id;
+    req.user = decoded.id;
     next();
   } catch (error) {
     throw new ApiError(403, "Expired or invalid token");

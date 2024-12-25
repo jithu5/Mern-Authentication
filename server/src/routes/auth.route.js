@@ -1,8 +1,9 @@
 import exress from 'express';
-import { login, logout, register, sendVerifyOtp, verifyEmail } from '../controllers/auth-controller.js';
+import { isAuthenticated, login, logout, register, sendPasswordReset, sendVerifyOtp, verifyEmail, verifyResetOtp } from '../controllers/auth-controller.js';
 import { userAuth } from '../middlewares/userAuth.middleware.js';
 
 const authRouter = exress.Router();
+
 
 // Route to register a new user
 authRouter.post('/register',register)
@@ -16,6 +17,12 @@ authRouter.post('/logout',logout)
 authRouter.post('/sendVerifyOtp',userAuth,sendVerifyOtp)
 
 authRouter.post('/verifyOtp',userAuth,verifyEmail)
+
+authRouter.post('/isAuth',userAuth,isAuthenticated)
+
+authRouter.post('/send-reset-otp',userAuth,sendPasswordReset)
+
+authRouter.post('/reset-password',userAuth,verifyResetOtp)
 
 
 export default authRouter;

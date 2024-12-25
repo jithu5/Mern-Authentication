@@ -117,6 +117,7 @@ export const logout = AsyncHandler(async (req, res) => {
   }
 });
 
+// send verification email notification with otp token
 export const sendVerifyOtp = AsyncHandler(async (req, res) => {
   try {
     const { userId } = req.body;
@@ -158,6 +159,7 @@ export const sendVerifyOtp = AsyncHandler(async (req, res) => {
   }
 });
 
+// verify the OTP and update the user's account
 export const verifyEmail = AsyncHandler(async (req, res) => {
   const { userId, otp } = req.body;
 
@@ -190,3 +192,75 @@ export const verifyEmail = AsyncHandler(async (req, res) => {
     throw new ApiError(500, "Error in verifying email", error);
   }
 });
+
+// check if the user is authenticated
+export const isAuthenticated = AsyncHandler(async(req, res)=>{
+  try {
+    return res.status(200)
+    .json(new ApiResponse(200,[],"Authenticated"));
+  } catch (error) {
+    throw new ApiError(401, "Invalid authorization");
+  }
+})
+
+// send password reset otp
+export const sendPasswordReset = AsyncHandler(async(req,res)=>{
+    // const { email } = req.body;
+    // if(!email){
+    //   throw new ApiError(400,"Email is required");
+    // }
+    try {
+      const user = await UserModel.findById(req.user);
+
+      if(!user){
+        throw new ApiError(404,"User not found");
+      }
+      const otp = String(Math.floor(1000 + Math.random() * 9000));
+
+      user.resetOtp = otp;
+      user.resetOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
+      await user.save();
+
+      const mailOptions = {
+        from: process.env.SENDER_EMAIL,
+        to: user.email,
+        subject: "Password Reset Request",
+        text: `Your OTP for password reset is: ${otp}. Please enter it within 24 hours to complete the process.`,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      return res.status(200).json(new ApiResponse(200,user,"OTP sent successfully for password reset"));
+    } catch (error) {
+      throw new ApiError(500,"Email is required or error in resetting password")
+    }
+});
+
+// verify otp for password reset
+export const verifyResetOtp = AsyncHandler(async(req,res)=>{
+  const { userId, otp,newPassword } = req.body;
+  if(!userId ||!otp ||!newPassword){
+    throw new ApiError(400,"User ID and OTP are required");
+  }
+  try {
+    
+    const user = await UserModel.findById(userId);
+    if(!user){
+      throw new ApiError(404,"User not found");
+    }
+    if(Date.now() > user.resetOtpExpireAt){
+      throw new ApiError(400,"OTP expired. Please request a new one.");
+    }
+    if(user.resetOtp!== otp){
+      throw new ApiError(400,"Invalid OTP. Please try again.");
+    }
+    user.password = newPassword;
+    user.resetOtp = '';
+    user.resetOtpExpireAt = 0;
+    await user.save();
+    return res.status(200).json(new ApiResponse(200,user,"Password reset successful"));
+  } catch (error) {
+    throw new ApiError(400,"User ID and OTP are required");
+  }
+});
+

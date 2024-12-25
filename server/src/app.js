@@ -22,15 +22,14 @@ app.use(morgan('dev'));
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')));
 
-console.log("JWT_SECRET:", process.env.JWT_SECRET);
-
 
 // Routes
 app.get('/', (req, res) => res.send('Hello World!'))
 
 import authRouter from './routes/auth.route.js';
 app.use('/api/auth', authRouter);
-
+import userRouter from './routes/user.route.js';
+app.use('/api/user', userRouter);
 
 // error handling
 app.use((err, req, res, next) => {
