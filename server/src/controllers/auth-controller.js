@@ -80,6 +80,7 @@ export const login = AsyncHandler(async (req, res) => {
     }
 
     const token = await existingUser.generateJwt();
+    console.log(token)
 
     const options = {
       httpOnly: true,

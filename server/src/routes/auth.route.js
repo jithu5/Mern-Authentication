@@ -18,7 +18,7 @@ authRouter.post('/sendVerifyOtp',userAuth,sendVerifyOtp)
 
 authRouter.post('/verifyOtp',userAuth,verifyEmail)
 
-authRouter.post('/isAuth',userAuth,isAuthenticated)
+authRouter.get('/isAuth',userAuth,isAuthenticated)
 
 authRouter.post('/send-reset-otp',userAuth,sendPasswordReset)
 

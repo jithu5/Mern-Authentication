@@ -14,12 +14,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 app.use(cors({
     credentials: true,
-    origin:'*' // replace with your domain
+    origin:process.env.CORS // replace with your domain
 }))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-app.use(morgan('dev'));
 app.use(cookieParser())
+app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
@@ -33,14 +33,25 @@ app.use('/api/user', userRouter);
 
 // error handling
 app.use((err, req, res, next) => {
-    console.error(err.stack)
-    console.log(err.errors)
-    const errMsg = err.message || "Something went wrong"
-    res.status(500).json({
-        message: errMsg,
-        error : err.errors || []
-    })
-})
+  console.error(err.stack); // Log stack trace for debugging
+
+  // Default error response structure
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Something went wrong";
+  const errors = err.errors || [];
+  const success = err.success 
+
+  console.log(statusCode, message)
+  // Send JSON response to frontend
+  res.status(statusCode).json({
+    status: "error",
+    statusCode,
+    message,
+    errors,
+    success,
+  });
+});
+
 
 
 
