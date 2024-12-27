@@ -67,6 +67,29 @@ JWT_SECRET
 
 NODE_ENV
 
+# Cross-Origin Resource Sharing (CORS)
+
+CORS is a security feature implemented by web browsers that allows or restricts web applications running at one origin to make requests for resources from a different origin. 
+
+## Why CORS is Important
+- Enables secure cross-origin requests
+- Prevents unauthorized access to resources
+- Essential for modern web applications
+
+## Common CORS Headers
+- `Access-Control-Allow-Origin`
+- `Access-Control-Allow-Methods`
+- `Access-Control-Allow-Headers`
+- `Access-Control-Allow-Credentials`
+
+## Implementation
+Typically implemented in the backend using middleware (like the `cors` package in Node.js) to handle cross-origin requests properly and securely.
+
+## Best Practices
+1. Only allow specific origins that need access
+2. Limit exposed headers to necessary ones
+3. Configure appropriate methods and credentials
+4. Consider security implications when setting up CORS
 CORS
 SMTP_HOST
 SMTP_PORT
@@ -75,4 +98,66 @@ SMTP_PASS
 
 SENDER_EMAIL 
 
+```
+
+## API Routes
+
+### Auth
+
+
+```bash
+# User Registration
+POST /api/auth/register
+{
+    "username": "user123",
+    "email": "user@example.com",
+    "password": "password123"
+}
+
+# User Login
+POST /api/auth/login
+{
+    "email": "user@example.com",
+    "password": "password123"
+}
+
+# Email Verification
+POST /api/auth/verify-email
+{
+    "email": "user@example.com", # email will be get from database no need to enter email address
+    "otp": "123456"
+}
+
+# Request Password Reset
+POST /api/auth/forgot-password
+{
+    "email": "user@example.com"
+}
+
+# Reset Password with OTP
+POST /api/auth/reset-password
+{
+    "email": "user@example.com", # email will be get from database no need to enter email address
+    "otp": "123456",
+    "newPassword": "newpass123"
+}
+
+# Change Password (Protected Route)
+PUT /api/auth/change-password
+{
+    "currentPassword": "password123",
+    "newPassword": "newpass123"
+}
+
+# Home Route (Public)
+GET /api/
+Returns: Welcome message and API status
+
+```bash
+# Get API Status
+GET /api/
+Response: {
+    "message": "Welcome to the API",
+    "status": "running"
+}
 ```
