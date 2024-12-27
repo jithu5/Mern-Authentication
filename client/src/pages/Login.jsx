@@ -59,6 +59,7 @@ function Login() {
           setIsLoggedin(true);
           getUserData()
           navigate("/");
+          toast.success(data.message);
           return;
         } else {
             console.log(data)

@@ -9,7 +9,7 @@ export const getUserData = AsyncHandler(async (req, res) => {
     if (!user) {
       throw new ApiError(404, "User not found");
     }
-
+    console.log(user)
     return res
       .status(200)
       .json(new ApiResponse(200, user, "User data fetched successfully"));
