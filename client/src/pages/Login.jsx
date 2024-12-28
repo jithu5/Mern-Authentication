@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { assets } from "../assets/assets";
 import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 function Login() {
   const navigate = useNavigate();
 
-  const { backendUrl, setIsLoggedin,getUserData } = useContext(AppContext);
+  const { backendUrl, setIsLoggedin,getUserData,isLoading,userdata } = useContext(AppContext);
 
   const [state, setState] = useState("signup");
 
@@ -17,6 +17,15 @@ function Login() {
     password: "",
     username: "",
   });
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (userdata) {
+        navigate("/")
+      }
+    }
+  }, [isLoading, userdata,navigate]);
+  
 
   const handleChange = (e) => {
     const { value, name } = e.target;

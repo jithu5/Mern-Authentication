@@ -42,7 +42,7 @@ This project is a full-stack web application built using **Express**, **MongoDB*
     npm install
 ```
 
-#### Set up environment variables in a .env file in server folder
+#### Set up environment variables in a .env file in the client folder
 
 ```bash
 VITE_SERVER_URL
@@ -57,15 +57,9 @@ VITE_SERVER_URL
     npm install
 ```
 
-#### Set up environment variables in a .env file in server folder
-
+#### Set up environment variables in a .env file in the server folder
 
 ```bash
-PORT 
-
-JWT_SECRET 
-
-NODE_ENV
 
 # Cross-Origin Resource Sharing (CORS)
 
@@ -90,20 +84,24 @@ Typically implemented in the backend using middleware (like the `cors` package i
 2. Limit exposed headers to necessary ones
 3. Configure appropriate methods and credentials
 4. Consider security implications when setting up CORS
-CORS
-SMTP_HOST
-SMTP_PORT
-SMTP_USER
-SMTP_PASS 
 
-SENDER_EMAIL 
+
+MONGODB_URI # MongoDB connection string
+PORT # Server port (e.g., 5000)
+JWT_SECRET # Secret key for JWT
+SMTP_HOST # SMTP server host
+SMTP_PORT # SMTP server port
+SMTP_USER # SMTP username/email
+SMTP_PASS # SMTP password
+SENDER_EMAIL # Email address for sending OTPs 
 
 ```
+
+---
 
 ## API Routes
 
 ### Auth
-
 
 ```bash
 # User Registration
@@ -128,36 +126,36 @@ POST /api/auth/verify-email
     "otp": "123456"
 }
 
-# Request Password Reset
-POST /api/auth/forgot-password
-{
-    "email": "user@example.com"
-}
-
 # Reset Password with OTP
-POST /api/auth/reset-password
+POST api/auth/send-reset-password-otp
 {
-    "email": "user@example.com", # email will be get from database no need to enter email address
-    "otp": "123456",
-    "newPassword": "newpass123"
+    "email": "user@example.com",
 }
 
 # Change Password (Protected Route)
-PUT /api/auth/change-password
+PUT /api/auth/reset-password
 {
-    "currentPassword": "password123",
+    "otp": "1234",
     "newPassword": "newpass123"
 }
 
-# Home Route (Public)
-GET /api/
-Returns: Welcome message and API status
-
-```bash
-# Get API Status
-GET /api/
-Response: {
-    "message": "Welcome to the API",
-    "status": "running"
-}
 ```
+
+---
+
+### JWT Authentication
+
+JWT is used for secure authentication. The token is generated on successful login and email verification. It is sent in the Authorization header for protected routes to verify the user's identity.
+
+- Generate Token: jsonwebtoken.sign(payload, secret, options)
+- Verify Token: jsonwebtoken.verify(token, secret)
+
+---
+
+## Notes
+
+- Ensure that your MongoDB instance is running and that the connection string is correctly set in the .env file.
+- The email service used for OTP generation is Brevo, but it can be replaced with any other email service.
+- This setup assumes the backend is running on a different port than the frontend. The React app should make API requests using Axios to interact with the backend.
+
+---

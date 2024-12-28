@@ -46,7 +46,7 @@ function NavBar() {
 
   return (
     <>
-      <header className="w-full flex items-center justify-between p-4 sm:p-5 sm:px-24 absolute top-0">
+      <header className="w-full flex items-center justify-between absolute top-0 py-6 px-7 sm:px-12 sm:py-10">
         <img src={assets.logo} alt="" className="w-28 sm:w-32" />
         {userdata ? (
           <div className="w-8 h-8 flex justify-center items-center rounded-full bg-black text-white relative group cursor-pointer">

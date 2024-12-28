@@ -18,7 +18,7 @@ function VerifyEmail() {
         toast.error("Please login to access this page.");
         navigate("/login");
       } else if (userdata.isAccountVerified) {
-        toast.info("Your email is already verified.");
+        // toast.info("Your email is already verified.");
         navigate("/");
       }
     }

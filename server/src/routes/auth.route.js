@@ -20,9 +20,9 @@ authRouter.post('/verifyOtp',userAuth,verifyEmail)
 
 authRouter.get('/isAuth',userAuth,isAuthenticated)
 
-authRouter.post('/send-reset-otp',userAuth,sendPasswordReset)
+authRouter.post("/send-reset-password-otp", sendPasswordReset);
 
-authRouter.post('/reset-password',userAuth,verifyResetOtp)
+authRouter.post('/reset-password',verifyResetOtp)
 
 
 export default authRouter;

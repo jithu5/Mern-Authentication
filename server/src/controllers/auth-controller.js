@@ -1,3 +1,4 @@
+import { EMAIL_VERIFY_TEMPLATE, PASSWORD_RESET_TEMPLATE } from "../config/emailtemplates.config.js";
 import transporter from "../config/modemailer.config.js";
 import UserModel from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
@@ -147,7 +148,8 @@ export const sendVerifyOtp = AsyncHandler(async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to: user.email,
       subject: "Verify your email address",
-      text: `Your OTP for email verification is: ${otp}. Please enter it within 24 hours to complete the verification process.`,
+      // text: `Your OTP for email verification is: ${otp}. Please enter it within 24 hours to complete the verification process.`,
+      html:EMAIL_VERIFY_TEMPLATE.replace("{{otp}}",otp).replace("{{email}}",user.email)
     };
 
     await transporter.sendMail(mailOptions);
@@ -206,12 +208,12 @@ export const isAuthenticated = AsyncHandler(async(req, res)=>{
 
 // send password reset otp
 export const sendPasswordReset = AsyncHandler(async(req,res)=>{
-    // const { email } = req.body;
-    // if(!email){
-    //   throw new ApiError(400,"Email is required");
-    // }
+    const { email } = req.body;
+    if(!email){
+      throw new ApiError(400,"Email is required");
+    }
     try {
-      const user = await UserModel.findById(req.user);
+      const user = await UserModel.findOne({ email: email });
 
       if(!user){
         throw new ApiError(404,"User not found");
@@ -219,19 +221,20 @@ export const sendPasswordReset = AsyncHandler(async(req,res)=>{
       const otp = String(Math.floor(1000 + Math.random() * 9000));
 
       user.resetOtp = otp;
-      user.resetOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
+      user.resetOtpExpireAt = Date.now() + 15 * 60 * 1000;
       await user.save();
 
       const mailOptions = {
         from: process.env.SENDER_EMAIL,
-        to: user.email,
+        to: email,
         subject: "Password Reset Request",
-        text: `Your OTP for password reset is: ${otp}. Please enter it within 24 hours to complete the process.`,
+        // text: `Your OTP for password reset is: ${otp}. Please enter it within 24 hours to complete the process.`,
+        html: PASSWORD_RESET_TEMPLATE.replace("{{otp}}",otp).replace("{{email}}",email)
       };
 
       await transporter.sendMail(mailOptions);
 
-      return res.status(200).json(new ApiResponse(200,user,"OTP sent successfully for password reset"));
+      return res.status(200).json(new ApiResponse(200,user,"OTP sent successfully for password reset to your registered email"));
     } catch (error) {
       throw new ApiError(500,"Email is required or error in resetting password")
     }
@@ -239,13 +242,13 @@ export const sendPasswordReset = AsyncHandler(async(req,res)=>{
 
 // verify otp for password reset
 export const verifyResetOtp = AsyncHandler(async(req,res)=>{
-  const { userId, otp,newPassword } = req.body;
-  if(!userId ||!otp ||!newPassword){
+  const { email, otp,newPassword } = req.body;
+  if(!email ||!otp ||!newPassword){
     throw new ApiError(400,"User ID and OTP are required");
   }
   try {
     
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findOne({ email});
     if(!user){
       throw new ApiError(404,"User not found");
     }
