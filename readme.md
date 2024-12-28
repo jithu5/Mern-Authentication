@@ -12,7 +12,7 @@ This project is a full-stack web application built using **Express**, **MongoDB*
 - **Backend**: Express.js
 - **Database**: MongoDB
 - **Authentication**: JWT (JSON Web Token)
-- **Email Verification & OTP**: Bravo (or any email service for OTP delivery)
+- **Email Verification & OTP**: Brevo (or any email service for OTP delivery)
 
 ---
 
@@ -32,7 +32,7 @@ This project is a full-stack web application built using **Express**, **MongoDB*
 ### Clone the Repository
 
 ```bash
-    cd <repository>
+    cd Mern-Authentication
 ```
 
 ### Client Folder
