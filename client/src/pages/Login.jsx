@@ -72,12 +72,11 @@ function Login() {
           return;
         } else {
             console.log(data)
-            throw new Error(data.message)
         }
       }
     } catch (error) {
         console.log(error.message)
-      toast.error(error.message);
+      toast.error(error.response?.data?.message);
     }
 
     // reset to default state
@@ -146,12 +145,12 @@ function Login() {
                 required
               />
             </div>
-            <Link
+        { state !=="signup" && <Link
               to={"/reset-password"}
               className="mb-4 inline-block text-indigo-500 cursor-pointer"
             >
               Forgot password?
-            </Link>
+            </Link>}
             <button
               type="submit"
               className="w-full px-5 py-3 text-white font-medium rounded-full bg-indigo-500 hover:bg-indigo-600"

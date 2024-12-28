@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { createContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 const AppContext = createContext({
   backendUrl: "",
@@ -32,16 +31,15 @@ function AppContextProvider({ children }) {
       }
     } catch (error) {
       setUserdata(null);
-      toast.error(
-        error.response?.data?.message || "Failed to fetch user data."
-      );
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    getUserData();
+    if (!userdata) {
+      getUserData();
+    }
   }, []);
 
   const AppValue = {

@@ -55,7 +55,7 @@ export const register = AsyncHandler(async (req, res) => {
       .status(201)
       .json(new ApiResponse(201, newUser, "Created new user successfully"));
   } catch (error) {
-    throw new ApiError(500, "Error while registering user", error);
+    throw new ApiError(500,error.message, error);
   }
 });
 
@@ -71,13 +71,13 @@ export const login = AsyncHandler(async (req, res) => {
     const existingUser = await UserModel.findOne({ email });
 
     if (!existingUser) {
-      throw new ApiError(401, "Invalid credentials");
+      throw new ApiError(401, "Email or Password doesn't match");
     }
 
     const isMatch = await existingUser.comparePassword(password);
 
     if (!isMatch) {
-      throw new ApiError(401, "Invalid credentials");
+      throw new ApiError(401, "Email or Password doesn't match");
     }
 
     const token = await existingUser.generateJwt();
@@ -96,7 +96,7 @@ export const login = AsyncHandler(async (req, res) => {
       .json(new ApiResponse(200, existingUser, "Logged in successfully"));
   } catch (error) {
     console.log(error);
-    throw new ApiError(500, "Error in logging in user", error);
+    throw new ApiError(500, error.message, error);
   }
 });
 
@@ -158,7 +158,7 @@ export const sendVerifyOtp = AsyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, user, "OTP sent successfully"));
   } catch (error) {
-    throw new ApiError(500, "Error in verying email");
+    throw new ApiError(500,error.message);
   }
 });
 
@@ -192,7 +192,7 @@ export const verifyEmail = AsyncHandler(async (req, res) => {
      .json(new ApiResponse(200, user, "Email verified successfully"));
 
   } catch (error) {
-    throw new ApiError(500, "Error in verifying email", error);
+    throw new ApiError(500,error.message, error);
   }
 });
 
@@ -236,7 +236,7 @@ export const sendPasswordReset = AsyncHandler(async(req,res)=>{
 
       return res.status(200).json(new ApiResponse(200,user,"OTP sent successfully for password reset to your registered email"));
     } catch (error) {
-      throw new ApiError(500,"Email is required or error in resetting password")
+      throw new ApiError(500,error.message)
     }
 });
 
@@ -264,7 +264,7 @@ export const verifyResetOtp = AsyncHandler(async(req,res)=>{
     await user.save();
     return res.status(200).json(new ApiResponse(200,user,"Password reset successful"));
   } catch (error) {
-    throw new ApiError(400,"User ID and OTP are required");
+    throw new ApiError(400,error.message);
   }
 });
 

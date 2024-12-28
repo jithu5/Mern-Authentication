@@ -62,7 +62,7 @@ function ResetPassword() {
         }
         toast.error(data.message);
       } catch (error) {
-        toast.error(error.message)
+        toast.error(error.response?.data?.message || "Error in resetting password");
       }
     }else{
       try {
@@ -77,7 +77,7 @@ function ResetPassword() {
         }
         toast.error(data.message);
       } catch (error) {
-        toast.error(error.message)
+        toast.error(error.response?.data?.message || "Error in sending otp");
       }
     }
   };
